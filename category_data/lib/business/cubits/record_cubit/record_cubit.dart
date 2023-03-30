@@ -1,0 +1,68 @@
+import 'package:injectable/injectable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+import 'package:category_data/data/models/record/record.dart';
+import 'package:category_data/data/services/record_service/record_service.dart';
+
+part 'record_state.dart';
+part 'record_cubit.freezed.dart';
+
+@injectable
+class RecordCubit extends Cubit<RecordState> {
+  RecordCubit({required this.recordService})
+      : super(const RecordState.initial());
+  final RecordService recordService;
+
+  Future<void> loadRecordsByCategoryId(int categoryId) async {
+    try {
+      emit(const RecordState.loading());
+      List<Record> records = await recordService.getByCategoryId(categoryId);
+      if (records.isNotEmpty) {
+        emit(RecordState.loaded(records: records));
+      } else {
+        emit(const RecordState.initial());
+      }
+    } catch (e) {
+      emit(RecordState.error(error: e.toString()));
+    }
+  }
+
+  Future<void> addRecord(Record record) async {
+    try {
+      await recordService.add(record);
+      emit(const RecordState.loading());
+      final List<Record> records =
+          await recordService.getByCategoryId(record.categoryId);
+      emit(RecordState.loaded(records: records, message: 'Данные сохранены'));
+    } catch (e) {
+      emit(RecordState.error(
+          records: state.records,
+          error: e.toString().replaceFirst('Exception: ', '')));
+    }
+  }
+
+  Future<void> updateRecord(Record record) async {
+    try {
+      await recordService.update(record);
+      emit(const RecordState.loading());
+      final List<Record> records =
+          await recordService.getByCategoryId(record.categoryId);
+      emit(RecordState.loaded(records: records, message: 'Данные сохранены'));
+    } catch (e) {
+      emit(RecordState.error(error: e.toString()));
+    }
+  }
+
+  Future<void> deleteRecord(Record record) async {
+    try {
+      await recordService.delete(record.id!);
+      emit(const RecordState.loading());
+      final List<Record> records =
+          await recordService.getByCategoryId(record.categoryId);
+      emit(RecordState.loaded(records: records, message: 'Данные удалены'));
+    } catch (e) {
+      emit(RecordState.error(error: e.toString()));
+    }
+  }
+}
