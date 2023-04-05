@@ -30,34 +30,34 @@ class RecordCubit extends Cubit<RecordState> {
 
   Future<void> addRecord(Record record) async {
     try {
-      await recordService.add(record);
       emit(const RecordState.loading());
+      await recordService.add(record);
       final List<Record> records =
           await recordService.getByCategoryId(record.categoryId);
       emit(RecordState.loaded(records: records, message: 'Данные сохранены'));
     } catch (e) {
       emit(RecordState.error(
-          records: state.records,
           error: e.toString().replaceFirst('Exception: ', '')));
     }
   }
 
   Future<void> updateRecord(Record record) async {
     try {
-      await recordService.update(record);
       emit(const RecordState.loading());
+      await recordService.update(record);
       final List<Record> records =
           await recordService.getByCategoryId(record.categoryId);
       emit(RecordState.loaded(records: records, message: 'Данные сохранены'));
     } catch (e) {
-      emit(RecordState.error(error: e.toString()));
+      emit(RecordState.error(
+          error: e.toString().replaceFirst('Exception: ', '')));
     }
   }
 
   Future<void> deleteRecord(Record record) async {
     try {
-      await recordService.delete(record.id!);
       emit(const RecordState.loading());
+      await recordService.delete(record.id!);
       final List<Record> records =
           await recordService.getByCategoryId(record.categoryId);
       emit(RecordState.loaded(records: records, message: 'Данные удалены'));

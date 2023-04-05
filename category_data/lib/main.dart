@@ -23,9 +23,7 @@ class App extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<CategoryCubit>(
-          create: (_) => GetIt.I.get<CategoryCubit>()
-            ..initService()
-            ..loadCategories(),
+          create: (_) => GetIt.I.get<CategoryCubit>()..init(),
         ),
         BlocProvider<RecordCubit>(
           create: (_) => GetIt.I.get<RecordCubit>(),

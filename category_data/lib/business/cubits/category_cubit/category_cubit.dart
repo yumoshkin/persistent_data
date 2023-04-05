@@ -14,8 +14,10 @@ class CategoryCubit extends Cubit<CategoryState> {
       : super(const CategoryState.initial());
   final CategoryService categoryService;
 
-  void initService() async {
+  void init() async {
+    emit(const CategoryState.loading());
     await categoryService.init();
+    await loadCategories();
   }
 
   Future<void> loadCategories() async {
@@ -34,34 +36,34 @@ class CategoryCubit extends Cubit<CategoryState> {
 
   Future<void> addCategory(Category category) async {
     try {
-      await categoryService.add(category);
       emit(const CategoryState.loading());
+      await categoryService.add(category);
       final List<Category> categories = await categoryService.getAll();
       emit(CategoryState.loaded(
           categories: categories, message: 'Данные сохранены'));
     } catch (e) {
       emit(CategoryState.error(
-          categories: state.categories,
           error: e.toString().replaceFirst('Exception: ', '')));
     }
   }
 
   Future<void> updateCategory(Category category) async {
     try {
-      await categoryService.update(category);
       emit(const CategoryState.loading());
+      await categoryService.update(category);
       final List<Category> categories = await categoryService.getAll();
       emit(CategoryState.loaded(
           categories: categories, message: 'Данные сохранены'));
     } catch (e) {
-      emit(CategoryState.error(error: e.toString()));
+      emit(CategoryState.error(
+          error: e.toString().replaceFirst('Exception: ', '')));
     }
   }
 
   Future<void> deleteCategory(int id) async {
     try {
-      await categoryService.delete(id);
       emit(const CategoryState.loading());
+      await categoryService.delete(id);
       final List<Category> categories = await categoryService.getAll();
       emit(CategoryState.loaded(
           categories: categories, message: 'Данные удалены'));

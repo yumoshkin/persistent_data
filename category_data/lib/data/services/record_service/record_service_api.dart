@@ -35,7 +35,7 @@ class RecordServiceApi implements RecordService {
   @override
   Future<void> add(Record record) async {
     if (!checkUniqueness(record)) {
-      throw Exception('Категория "${record.name}" уже существует');
+      throw Exception('Запись "${record.name}" уже существует');
     }
 
     await _recordsBox!.add(record.copyWith(id: getMaxId() + 1));
@@ -43,6 +43,10 @@ class RecordServiceApi implements RecordService {
 
   @override
   Future<void> update(Record record) async {
+    if (!checkUniqueness(record)) {
+      throw Exception('Запись "${record.name}" уже существует');
+    }
+
     final index = _recordsBox!.values
         .toList()
         .indexWhere((element) => element.id == record.id);

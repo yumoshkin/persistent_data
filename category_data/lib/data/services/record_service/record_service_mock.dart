@@ -3,7 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:category_data/data/models/record/record.dart';
 import 'package:category_data/data/services/record_service/record_service.dart';
 
-List<Record> categories = [
+List<Record> records = [
   const Record(
       id: 1, categoryId: 1, name: 'Запись_1', description: 'Описание_1'),
   const Record(
@@ -18,13 +18,13 @@ class RecordServiceMock implements RecordService {
   @override
   Future<List<Record>> getAll() async {
     await Future.delayed(const Duration(milliseconds: 100));
-    return categories;
+    return records;
   }
 
   @override
   Future<List<Record>> getByCategoryId(int categoryId) async {
     await Future.delayed(const Duration(milliseconds: 100));
-    return categories
+    return records
         .where((element) => element.categoryId == categoryId)
         .toList();
   }
@@ -32,52 +32,58 @@ class RecordServiceMock implements RecordService {
   @override
   Future<Record?> getById(int id) async {
     await Future<dynamic>.delayed(const Duration(milliseconds: 100));
-    return categories.singleWhere((element) => element.id == id);
+    return records.singleWhere((element) => element.id == id);
   }
 
   @override
-  Future<void> add(Record category) async {
+  Future<void> add(Record record) async {
     await Future.delayed(const Duration(milliseconds: 100));
 
-    if (!checkUniqueness(category)) {
-      throw Exception('Запись "${category.name}" уже существует');
+    if (!checkUniqueness(record)) {
+      throw Exception('Запись "${record.name}" уже существует');
     }
 
-    categories.add(category.copyWith(id: getMaxId() + 1));
+    records.add(record.copyWith(id: getMaxId() + 1));
   }
 
   @override
-  Future<void> update(Record category) async {
-    final index = categories.indexWhere((element) => element.id == category.id);
-    categories[index] = categories[index].copyWith(
-      id: category.id,
-      name: category.name,
+  Future<void> update(Record record) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    if (!checkUniqueness(record)) {
+      throw Exception('Запись "${record.name}" уже существует');
+    }
+
+    final index = records.indexWhere((element) => element.id == record.id);
+    records[index] = records[index].copyWith(
+      id: record.id,
+      name: record.name,
     );
   }
 
   @override
   Future<void> delete(int id) async {
-    final index = categories.indexWhere((element) => element.id == id);
-    categories.removeAt(index);
+    final index = records.indexWhere((element) => element.id == id);
+    records.removeAt(index);
   }
 
   int getMaxId() {
-    if (categories.isNotEmpty) {
-      final categoriesList = [...categories];
-      categoriesList.sort((a, b) => a.id!.compareTo(b.id!));
-      return categoriesList.last.id!;
+    if (records.isNotEmpty) {
+      final recordsList = [...records];
+      recordsList.sort((a, b) => a.id!.compareTo(b.id!));
+      return recordsList.last.id!;
     } else {
       return 0;
     }
   }
 
-  bool checkUniqueness(Record category) {
+  bool checkUniqueness(Record record) {
     var index = -1;
-    if (category.id == null) {
-      index = categories.indexWhere((element) => element.name == category.name);
+    if (record.id == null) {
+      index = records.indexWhere((element) => element.name == record.name);
     } else {
-      index = categories.indexWhere((element) =>
-          element.name == category.name && element.id != category.id);
+      index = records.indexWhere(
+          (element) => element.name == record.name && element.id != record.id);
     }
     return index == -1 ? true : false;
   }

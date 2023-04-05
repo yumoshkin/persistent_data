@@ -60,6 +60,10 @@ class CategoryServiceApi implements CategoryService {
 
   @override
   Future<void> update(Category category) async {
+    if (!checkUniqueness(category)) {
+      throw Exception('Категория "${category.name}" уже существует');
+    }
+
     final index = _categoriesBox!.values
         .toList()
         .indexWhere((element) => element.id == category.id);
@@ -94,6 +98,7 @@ class CategoryServiceApi implements CategoryService {
       index = _categoriesBox!.values.toList().indexWhere((element) =>
           element.name == category.name && element.id != category.id);
     }
+
     return index == -1 ? true : false;
   }
 }

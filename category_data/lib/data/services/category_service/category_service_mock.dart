@@ -42,6 +42,11 @@ class CategoryServiceMock implements CategoryService {
   Future<void> update(Category category) async {
     await Future.delayed(const Duration(milliseconds: 100));
     final index = categories.indexWhere((element) => element.id == category.id);
+
+    if (!checkUniqueness(category)) {
+      throw Exception('Категория "${category.name}" уже существует');
+    }
+
     categories[index] = categories[index].copyWith(
       id: category.id,
       name: category.name,

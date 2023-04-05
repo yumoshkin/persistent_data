@@ -20,7 +20,7 @@ class RecordDeleteDialog extends StatelessWidget {
     return AlertDialog(
       title: const Text('Подтверждение'),
       content: Text(
-        'Удалить категорию "${record.name}"?',
+        'Удалить запись "${record.name}"?',
         style: const TextStyle(fontSize: 18),
       ),
       actionsPadding: const EdgeInsets.only(bottom: 16, right: 16),
