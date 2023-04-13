@@ -76,22 +76,22 @@ class _RecordFormScreenState extends State<RecordFormScreen> {
             ),
           );
     }
-    goBack();
+
+    popIfSuccess();
   }
 
-  void cancel() async {
-    if (context.read<RecordCubit>().state.error.isNotEmpty) {
-      await context
+  void popIfSuccess() {
+    if (context.read<RecordCubit>().state.error.isEmpty) {
+      context.pop();
+    } else {
+      context
           .read<RecordCubit>()
           .loadRecordsByCategoryId(int.parse(widget.categoryId));
     }
-    goBack();
   }
 
-  void goBack() {
-    if (context.read<RecordCubit>().state.error.isEmpty) {
-      context.pop();
-    }
+  void cancel() async {
+    context.pop();
   }
 
   @override

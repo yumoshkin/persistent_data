@@ -57,20 +57,20 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
             ),
           );
     }
-    goBack();
+
+    popIfSuccess();
+  }
+
+  void popIfSuccess() {
+    if (context.read<CategoryCubit>().state.error.isEmpty) {
+      context.pop();
+    } else {
+      context.read<CategoryCubit>().loadCategories();
+    }
   }
 
   void cancel() async {
-    if (context.read<CategoryCubit>().state.error.isNotEmpty) {
-      await context.read<CategoryCubit>().loadCategories();
-    }
-    goBack();
-  }
-
-  void goBack() {
-    if (context.read<CategoryCubit>().state.error.isEmpty) {
-      context.pop();
-    }
+    context.pop();
   }
 
   @override

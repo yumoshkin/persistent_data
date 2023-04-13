@@ -16,7 +16,7 @@ class CategoryServiceApi implements CategoryService {
     Hive.registerAdapter(CategoryAdapter());
     Hive.registerAdapter(RecordAdapter());
 
-    // load init data
+    // load initial data
     _categoriesBox = await Hive.openBox<Category>('categories');
     if (_categoriesBox!.values.isEmpty) {
       _categoriesBox!.add(const Category(id: 1, name: 'Категория 1'));

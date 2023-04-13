@@ -18,6 +18,7 @@ class RecordCubit extends Cubit<RecordState> {
     try {
       emit(const RecordState.loading());
       List<Record> records = await recordService.getByCategoryId(categoryId);
+
       if (records.isNotEmpty) {
         emit(RecordState.loaded(records: records));
       } else {
@@ -60,7 +61,12 @@ class RecordCubit extends Cubit<RecordState> {
       await recordService.delete(record.id!);
       final List<Record> records =
           await recordService.getByCategoryId(record.categoryId);
-      emit(RecordState.loaded(records: records, message: 'Данные удалены'));
+
+      if (records.isNotEmpty) {
+        emit(RecordState.loaded(records: records, message: 'Данные удалены'));
+      } else {
+        emit(const RecordState.initial(message: 'Данные удалены'));
+      }
     } catch (e) {
       emit(RecordState.error(error: e.toString()));
     }

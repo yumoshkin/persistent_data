@@ -35,16 +35,19 @@ class ImageCubit extends Cubit<ImageState> {
   }
 
   Future<void> addImage(Img image) async {
-    final oldImages = state.images;
     try {
       emit(const ImageState.loading());
-      await imageService.add(image);
-      final List<Img> images = await imageService.getAll();
-      emit(ImageState.loaded(images: images, message: 'Данные сохранены'));
+      final isAdded = await imageService.add(image);
+
+      if (isAdded) {
+        final List<Img> images = await imageService.getAll();
+        emit(ImageState.loaded(images: images, message: 'Данные сохранены'));
+      } else {
+        emit(const ImageState.error(error: 'Неправильный url'));
+      }
     } catch (e) {
       emit(ImageState.error(
           error: e.toString().replaceFirst('Exception: ', '')));
-      emit(ImageState.loaded(images: oldImages));
     }
   }
 
@@ -55,7 +58,8 @@ class ImageCubit extends Cubit<ImageState> {
       final List<Img> images = await imageService.getAll();
       emit(ImageState.loaded(images: images, message: 'Данные сохранены'));
     } catch (e) {
-      emit(ImageState.error(error: e.toString()));
+      emit(ImageState.error(
+          error: e.toString().replaceFirst('Exception: ', '')));
     }
   }
 

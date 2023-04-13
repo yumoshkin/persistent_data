@@ -24,6 +24,7 @@ class CategoryCubit extends Cubit<CategoryState> {
     try {
       emit(const CategoryState.loading());
       final List<Category> categories = await categoryService.getAll();
+
       if (categories.isNotEmpty) {
         emit(CategoryState.loaded(categories: categories));
       } else {
@@ -65,8 +66,13 @@ class CategoryCubit extends Cubit<CategoryState> {
       emit(const CategoryState.loading());
       await categoryService.delete(id);
       final List<Category> categories = await categoryService.getAll();
-      emit(CategoryState.loaded(
-          categories: categories, message: 'Данные удалены'));
+
+      if (categories.isNotEmpty) {
+        emit(CategoryState.loaded(
+            categories: categories, message: 'Данные удалены'));
+      } else {
+        emit(const CategoryState.initial(message: 'Данные удалены'));
+      }
     } catch (e) {
       emit(CategoryState.error(error: e.toString()));
     }

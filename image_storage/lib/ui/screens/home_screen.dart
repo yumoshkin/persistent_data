@@ -37,8 +37,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
 
+    reloadIfError();
     FocusManager.instance.primaryFocus?.unfocus();
-    _imageFormKey.currentState?.reset();
+  }
+
+  void reloadIfError() {
+    if (context.read<ImageCubit>().state.error.isNotEmpty) {
+      context.read<ImageCubit>().loadImages();
+    }
   }
 
   @override

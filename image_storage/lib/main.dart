@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:image_storage/ui/screens/home_screen.dart';
 
 import 'package:image_storage/business/cubit_provider.dart';
 import 'package:image_storage/business/image_cubit/image_cubit.dart';
+import 'package:image_storage/ui/screens/home_screen.dart';
 
 void main() async {
   initializeCubit();

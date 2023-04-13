@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'package:image_storage/data/models/img.dart';
-import 'package:path_provider/path_provider.dart';
 
 @LazySingleton()
 class ImageService {
@@ -28,17 +28,15 @@ class ImageService {
     List<Map<String, Object?>>? images = [];
     List<Img> imagesList = [];
 
-    // if (db != null) {
     images = await db!.query('images');
     imagesList = images.isNotEmpty
         ? images.map((element) => Img.fromJson(element)).toList()
         : [];
-    // }
 
     return imagesList;
   }
 
-  Future<void> add(Img img) async {
+  Future<bool> add(Img img) async {
     var uniqueness = await checkUniqueness(img);
     if (!uniqueness) {
       throw Exception('Url "${img.url}" уже существует');
@@ -46,7 +44,7 @@ class ImageService {
 
     final file = await downloadFile(img.url);
     if (file == null) {
-      return;
+      return false;
     }
 
     await db!.insert(
@@ -54,6 +52,8 @@ class ImageService {
       img.copyWith(path: file.path).toJson(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+
+    return true;
   }
 
   Future<void> update(Img img) async {
